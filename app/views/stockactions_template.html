@@ -1,0 +1,15 @@
+<div class="ui-widget-content" ng-class="{'panel' : true, 'panel-green': stockactions.action=='buy', 'panel-red': stockactions.action=='sell'}" style="width: 250px; position: absolute; left: 1117px; top: 216px;" id="draggable">
+    <div class="panel-heading" style="z-index:99; position:relative">
+        Add {{stockactions.action}} {{stockactions.stock}} ({{stockactions.firstpair}} - {{stockactions.secondpair}}) <div class="pull-right"><button class="btn btn-xs" ng-class="{'panel' : true, 'btn-success': stockactions.action=='buy', 'btn-danger': stockactions.action=='sell'}" ng-click="stockactions.keepopen=false"><span class="fa fa-times"></span></button></div>
+    </div>
+    <div class="panel-body" style="z-index:99; position:relative; background-color:white">
+        <div class="form-group">
+        	<md-datepicker ng-model="stockactions.realdate" md-placeholder="Pick Date"></md-datepicker>
+        	<div class="input-group">
+        	  <input class="form-control" ng-model="stockactions.realshaar" placeholder="real shaar" aria-describedby="basic-addon2">
+        	  <span class="input-group-addon btn btn-default" id="basic-addon2" ng-click="stockactions.addstockaction()">Add</span>
+        	</div>
+        </div>
+
+    </div>
+</div>

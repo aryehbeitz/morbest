@@ -1,0 +1,79 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Charts</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-lg-6 col-sm-12" id="line-chart" ng-controller="BlankCtrl">
+        <table st-table="rowCollection" class="table table-striped">
+            <thead>
+            <tr>
+            <!--     <th st-sort="id">id</th>
+                <th st-sort="stock_name">stock_name</th>
+                <th st-sort="stock_name_megama">stock_name_megama</th>
+                <th st-sort="stock_number">stock_number</th>
+                <th st-sort="stock_type">stock_type</th>
+                <th st-sort="machzor_th">machzor_th</th>
+                <th st-sort="inserted">inserted</th>
+                <th st-sort="last_shaar">last_shaar</th>
+                <th st-sort="last_update">last_update</th>
+             -->    <th ng-repeat="row in headerRows">{{row}}</th>
+            </tr>
+            <tr>
+                <th colspan="9">
+                    <input st-search placeholder="global search" class="input-sm form-control" type="search"/>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in rowCollection">
+                <td ng-repeat="rowName in headerRows">{{row[rowName]}}</td>
+                <!-- <td>{{row.stock_name}}</td> -->
+            </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="row">
+<table st-table="rowCollection1" class="table table-striped">
+        <thead>
+        <tr>
+            <th st-sort="firstName">first name</th>
+            <th st-sort="lastName">last name</th>
+            <th st-sort="birthDate">birth date</th>
+            <th st-sort="balance">balance</th>
+            <th>email</th>
+        </tr>
+        <tr>
+
+            <th colspan="5">
+                <input st-search placeholder="global search" class="input-sm form-control" type="search"/>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in rowCollection1">
+            <td>{{row.firstName | uppercase}}</td>
+            <td>{{row.lastName}}</td>
+            <td>{{row.birthDate | date}}</td>
+            <td>{{row.balance | currency}}</td>
+            <td><a ng-href="mailto:{{row.email}}">email</a></td>
+        </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

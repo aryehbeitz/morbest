@@ -1,0 +1,114 @@
+<style>
+/* .squaredOne */
+
+.squaredOne {
+    width: 28px;
+    height: 28px;
+    position: relative;
+    /*margin: 20px auto;*/
+    background: #fcfff4;
+    background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+    background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+    box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.squaredOne label {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    cursor: pointer;
+    background: -webkit-linear-gradient(top, #222222 0%, #45484d 100%);
+    background: linear-gradient(to bottom, #222222 0%, #45484d 100%);
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px white;
+}
+
+.squaredOne label:after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: #27ae60;
+    background: -webkit-linear-gradient(top, #27ae60 0%, #145b32 100%);
+    background: linear-gradient(to bottom, #27ae60 0%, #145b32 100%);
+    box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+}
+
+.squaredOne label:hover::after {
+    opacity: 0.3;
+}
+
+.squaredOne input[type=checkbox] {
+    visibility: hidden;
+}
+
+.squaredOne input[type=checkbox]:checked + label:after {
+    opacity: 1;
+}
+
+
+/* end .squaredOne */
+</style>
+<div ng-controller="QuestionsCtrl as q">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Questions Template</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-centered">
+                <div class="input-group">
+                    <button class="btn btn-default btn-circle" ng-click="q.Prev()"><span class="fa fa-minus"></span></button>
+                    <!-- class="form-control" -->
+                    <input type="text" ng-model="q.qNumber" maxlength="2" size="1" style="text-align: center; ">
+                    <button class="btn btn-default btn-circle" ng-click="q.Next()"><span class="fa fa-plus"></span></button>
+                </div>
+            </div>
+            Min Weight: {{q.min_weight}}
+            <br>Max Weight: {{q.max_weight}}
+            <br>Accumulated Risk: {{q.totalrisk}}
+            <br>Client Rank: {{q.clientRank}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div ng-if="q.qNumber > 1" class="col-centered" style="border-style: solid;width:500px">
+                <h3 style="text-align:center">{{q.q_a[q.qNumber].description}}</h2>
+                <!-- selected answer: {{q.q_a[q.qNumber].the_answer}} -->
+                <div class="col-centered" style="left:50%;" ng-repeat="v in q.q_a[q.qNumber].questions">
+                    <label class="btn btn-default col-centered" ng-model="q.q_a[q.qNumber].the_answer" uib-btn-radio="v.short_q_name" ng-click="q.calcRisk()" style="width:500px;">{{v.long_q_name}}
+                    </label>
+                </div>
+            </div>
+            <!-- this show the second question - age -->
+            <div ng-if="q.qNumber == 1" class="col-centered" style="border-style: solid;width:500px">
+                <!-- http://jfmdev.github.io/ngComboDatePicker/ -->
+                <ng-combo-date-picker ng-model="q.birth_date" ng-min-date="{{ q.min_date.toString() }}" ng-max-date="{{ q.max_date.toString() }}" ></ng-combo-date-picker> {{q.age}}
+                <!-- <br>{{q.age_risk}}<br>{{q.sc}} -->
+
+			</div>
+            <!-- this show the first question -->
+			<div ng-if="q.qNumber == 0 && q.dataloaded == true" class="col-centered" style="border-style: solid;width:1000px">
+			<div class="panel panel-success" ng-repeat="v in q.q_a[q.qNumber].questions">
+			    <div class="panel-heading">
+			        <nobr><input type="checkbox" ng-model = "v.is_open" ng-click = "q.firstQ(v, $index)" style="zoom:2;vertical-align:top;" ng-true-value="true" ng-false-value="false"/><span style="font-size: 200%;vertical-align:top;">{{v.long_q_name}}</span></nobr>
+			    </div>
+			    <div class="panel-body" ng-if="v.is_open == true">
+			        <p>{{v.long_des}}</p>
+			    </div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+     <pre>{{q.firstQuestion | json}}</pre>
+     <pre>{{q.q_a[q.qNumber] | json}}</pre>
+	</div>
+</div>
+
+<!--  <label>Format: <span class="muted-text">(manual alternate <em class="ng-binding">M!/d!/yyyy</em>)</span></label> <select class="form-control ng-pristine ng-valid ng-touched" ng-model="format" ng-options="f for f in formats"><option value="" class=""></option><option label="dd-MMMM-yyyy" value="string:dd-MMMM-yyyy" selected="selected">dd-MMMM-yyyy</option><option label="yyyy/MM/dd" value="string:yyyy/MM/dd">yyyy/MM/dd</option><option label="dd.MM.yyyy" value="string:dd.MM.yyyy">dd.MM.yyyy</option><option label="shortDate" value="string:shortDate">shortDate</option></select> -->

@@ -1,0 +1,189 @@
+<style>
+.table{
+    width:auto;
+}
+body {
+    font-family: Arial;
+}
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    color: blue;
+}
+
+a.editable-click {
+    color: green;
+    border-bottom: dotted 1px black;
+}
+
+a.editable-click:hover {
+    color: #47a447;
+    border-bottom-color: #47a447;
+}
+
+.input-group .form-control {
+    float: initial;
+    width: 60px;
+    margin: 0 auto;
+}
+th, td, div {
+    font-family: Arial;
+    text-align: center;
+    
+}
+td {
+    white-space: nowrap;
+}
+
+</style>
+<div ng-controller="MaslulimCtrl as maslulim">
+    <!-- <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Maslulim Template</h1>
+        </div>
+    </div> -->
+    Selected Maslul: {{maslulim.selectedMaslul}}
+
+    <div class="row" ng-if="maslulim.data_ready==true" ng-repeat="maslulArr in maslulim.maslulimData" >
+        <div class="col-lg-12">
+    <div class="col-md-12">
+        <div class="input-group" ng-show="$index == 0">
+            <button class="btn btn-default btn-circle" ng-click="maslulim.Theprev()"><span class="fa fa-minus"></span></button>
+            <input class="form-control" ng-model="maslulim.rank">
+            <button class="btn btn-default btn-circle" ng-click="maslulim.Thenext()"><span class="fa fa-plus"></span></button>
+        </div>
+        <!-- <input type="text" maxlength="3" size="2" disabled > -->
+    </div>
+    <div ng-show="maslulArr.client_risk_from <= maslulim.rank && maslulArr.client_risk_to >= maslulim.rank">
+            <table>
+                <tbody>
+                    <tr style="border:none;">
+                        <th style="border:none; width:30px;"></th>
+                        <th style=" padding:0px; border:none; margin:0">
+                            <div style="padding-left:10px; padding-right:10px; background-color:#bfff00; height:100%; width:100%; font-size:1.5em;" >Portfolio Name</div>
+                            <div style="height:2px; width:100%; background-color: black;"></div>
+                            <div style="background-color:#bfff00; font-weight:strong;">
+                            Plan {{maslulArr.maslul_number}}
+                            </div>
+                        </th>
+                        <th style="width: 30px;"></th>
+                        <th style=" padding:0px; border:none; margin:0">
+                        <div style="padding-left:10px; padding-right:10px; background-color:#bfff00; height:100%; width:100%; font-size:1.5em;" >Sharp Ratio</div>
+                            <div style="height:2px; width:100%; background-color: black;"></div>
+                            <div style="background-color:#bfff00; font-weight:strong;">{{maslulArr.sum_index_sharp}}</div>
+                            </th>
+                        <th style="width: 30px;"></th>
+                        <th colspan="2" style=" padding:0px; border:none; margin:0">
+                        <div style="padding-left:10px; padding-right:10px; background-color:#bfff00; height:100%; width:100%;font-size:1.5em;" >Standard Deviation</div>
+                            <div style="height:2px; width:100%; background-color: black; "></div>
+                            <div style="background-color:#bfff00; font-weight:strong;">{{maslulArr.sum_standard_d}}</div></th>
+                    </tr>
+                </tbody>
+            </table>   
+            <table class="table table-striped table-bordered table-hover" style="width:auto">
+                <thead >
+                    <!-- <tr>
+                    <td style="padding-bottom: 10px; border: none;"></td>
+                    </tr> -->
+                    <tr>
+                        <th></th>
+                        <th>Afikim</th>
+                        <th style="text-align: center;">{{maslulArr.short_description}}</th>
+                        <th ng-repeat="afik in maslulArr.afikim" style="text-align: center;">{{afik.afik_name}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if=0 class="gradeX">
+                        <td>
+                            <!-- first column -->
+                            Standard Deviation
+                        </td>
+                        <td>
+                            <!-- sum -->
+                            {{maslulArr.sum_standard_d}}
+                        </td>
+                        <td style="padding: 2px;" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.standard_d_relative}}
+                        </td>
+                    </tr>
+                    <tr ng-if=0 class="gradeX">
+                        <td>
+                            <!-- first column -->
+                            Sharp
+                        </td>
+                        <td>
+                            <!-- sum -->
+                            {{maslulArr.sum_index_sharp}}
+                        </td>
+                        <td style="padding: 2px; text-align:center" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.index_sharp_relative}}
+                        </td>
+                    </tr>
+                    <tr class="gradeX">
+                        <td rowspan="6">
+                            <button class="btn btn-default col-centered" ng-model="maslulim.selectedMaslul" uib-btn-radio="maslulArr.maslul_number" ng-click="maslulim.updateMaslul()">
+                                {{maslulArr.client_risk_name}} 
+                            </button>
+                            <!-- <pre>{{maslulArr | json}}</pre> -->
+                        </td>
+                        <td>
+                            <!-- first column -->
+                            Holding %
+                        </td>
+                        <td>
+                            <!-- sum -->
+                            {{maslulArr.sum_holding}}
+                        </td>
+                        <td style="padding: 2px; text-align: center;" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.afik_holding_percent}}
+                        </td>
+                    </tr>
+                    <tr ng-if=0 class="gradeX">
+                        <td style="text-align: left !important;">
+                            <!-- first column -->
+                            % Min Holding
+                        </td>
+                        <td>
+                        </td>
+                        <td style="padding: 2px; text-align: center;" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.afik_min_holding_percent}}
+                        </td>
+                    </tr>
+                    <tr class="gradeX">
+                        <td style="text-align: left !important;">
+                            <!-- first column -->
+                            % Max Holding
+                        </td>
+                        <td>
+                        </td>
+                        <td style="padding: 2px; text-align: center;" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.afik_max_holding_percent}}
+                        </td>
+                    </tr>
+                    <tr class="gradeX">
+                        <td style="text-align: left !important;">
+                            <!-- first column -->
+                            % Annual Return
+                        </td>
+                        <td>
+                            <!-- sum -->
+                            {{maslulArr.sum_annual_yield}}
+                        </td>
+                        <td style="padding: 2px; text-align: center;" ng-repeat="afik in maslulArr.afikim">
+                            {{afik.annual_yield_relative}}
+                        </td>
+                    </tr>
+                    <div style="padding-bottom: 20px; border: none;"></div>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>

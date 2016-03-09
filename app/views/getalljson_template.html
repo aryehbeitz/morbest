@@ -1,0 +1,340 @@
+<!-- <div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Get All Json</h1>
+	</div>
+</div> -->
+<!-- this for inline editing -->
+<!-- http://plnkr.co/edit/DtD4xC?p=preview -->
+<style>
+.table {
+	font-size: 12px;
+}
+.col-centered{
+	text-align: center;
+}
+.specialtable
+{
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	width:100%;
+	border-collapse:collapse;
+}
+.specialtable td, .specialtable th {
+	font-size:1.2em;
+	border:1px solid #98bf21;
+	padding:3px 7px 2px 7px;
+	white-space: nowrap;
+}
+.specialtable th {
+	font-size:1.1em;
+	text-align:left;
+	padding-top:5px;
+	padding-bottom:4px;
+	background-color:#A7C942;
+	/*color:#fff;*/
+	color: #000;
+	white-space: nowrap;
+}
+.specialtable tr.alt td {
+	color:#000;
+	background-color:#EAF2D3;
+}
+.barchartdiv {
+	height: 180px;
+	width: 150px;
+	padding:0px;
+	margin:0px;
+	display: inline-block;
+}
+</style>
+
+<div class="row" ng-controller="GetAllJsonCtrl as getalljson"><!-- max-width:800; -->
+<div ng-init="window.toggleNavbar()" ng-if="getalljson.loaded">
+	<table  st-table="getalljson.rowCollection" class="table table-responsive" style="overflow-x:auto; " > 
+	<!-- selectpg(5) -->
+
+		<thead>
+		<tr>
+			<td colspan="5" class="text-center"> 
+			<!-- setpage="getalljson.pagetoset" -->
+				<div st-pagination=""  st-items-by-page="getalljson.itemsByPage" st-displayed-pages="10" style="cursor: pointer;"></div>
+			</td>
+		</tr>
+			<tr>
+				<th>
+					<input st-search placeholder="global search" class="input-sm form-control" type="search" />
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="val in getalljson.rowCollection" ng-init="getalljson.init(val)" >
+				<td ng-init=getalljson.setPos(val.json_string[getalljson.bests_review]["parent_pos"])>
+				
+					<div class="row">
+						<div class="col-md-3 col-centered" ng-init="myColor=getalljson.buysellstyle(val.json_string[getalljson.bests_review].last_action)" style="font-size:20px;padding: 5px;margin: 5px;height:100px;" ng-style="{'background-color': myColor}">{{val.json_string[getalljson.bests_review].symbol_name}}<br>
+									{{val.json_string[getalljson.bests_review].symbol}}</div>
+						<div class="col-md-1 col-centered" ng-init="myColor=getalljson.buysellstyle(val.json_string[getalljson.bests_review].last_action)" style="font-size:18px;padding: 5px;margin: 5px;height:100px; word-break: normal" ng-style="{'background-color': myColor}">{{val.run_date}}</div>
+						<div class="col-md-2 col-centered" ng-init="myColor=getalljson.buysellstyle(val.json_string[getalljson.bests_review].last_action)" style="font-size:60px;padding: 5px;margin: 5px;height:100px;" ng-style="{'background-color': myColor}"><div class="col-centered">{{val.json_string[getalljson.bests_review].last_action}}</div></div>		
+						<div class="col-md-2 col-centered" ng-init="myColor=getalljson.buysellstyle(val.json_string[getalljson.bests_review].last_action)" style="font-size:60px;padding: 5px;margin: 5px;height:100px;" ng-style="{'background-color': myColor}">{{val.json_string[getalljson.bests_review].last_action_shaar}}</div>						
+						<div class="col-md-2 col-centered" ng-init="myColor=getalljson.buysellstyle(val.json_string[getalljson.bests_review].last_action)" style="font-size:35px;padding: 5px;margin: 5px;height:100px;" ng-style="{'background-color': myColor}">{{val.json_string[getalljson.bests_review].date_last_action}}</div>
+					</div>
+					<div class="row">
+					<class="col-md-3" style="margin-left: 10px;">
+						<span ng-if="val.json_string[getalljson.bests_review].saved_actual_pair=='true'">Actual {{val.json_string[getalljson.bests_review].last_action}}</span>
+					    <input ng-if="getalljson.showbox==true" id="pwd" type="password" class="form-control" length="3" style="width:15%" ng-model="getalljson.password" ng-change="getalljson.checkpassword()" />
+						<button ng-if="getalljson.locked==true" class="btn btn-primary" ng-dblclick="getalljson.dounlock()"><div class="fa  fa-lock"><md-tooltip md-direction="top">Double Click to Unlock</md-tooltip></button>
+
+						<button ng-if="getalljson.unlocked==true" class="btn btn-primary" ng-click=getalljson.dolock()><div class="fa  fa-unlock"><md-tooltip md-direction="top">Click to Lock</md-tooltip></button>
+						<button type="button" class="btn btn-default" ng-click="getalljson.returnFnHistorical()"><div class="fa fa-reply" ></div> Hist Run</button>
+
+						<div ng-if="getalljson.unlocked==true"><button type="button" class="btn btn-success" ng-click="getalljson.dobuy(val.json_string[getalljson.bests_review].symbol)">buy</button><button type="button" class="btn btn-danger" ng-click="getalljson.dosell(val.json_string[getalljson.bests_review].symbol)">sell</button><button type="button" class="btn btn-primary" ng-click="getalljson.openstockviews(val.json_string[getalljson.bests_review].symbol)">view<md-tooltip md-direction="top">{{val.json_string[getalljson.bests_review].first_pair}}-{{val.json_string[getalljson.bests_review].second_pair}}</md-tooltip></button></div>
+						<button ng-if="getalljson.specialview == true" type="button" class="btn btn-default" ng-click="getalljson.returnFn()">Return to regular view</button>
+						</div>
+
+							
+					</div>
+
+					<div class="row" style="margin-left: -5px;" >
+					<!-- | filter : { bursa: getalljson.bursa } -->
+						<div  >
+						
+			<!-- 			<stock-actions savedactions=getalljson.savedactions stock=value.symbol stockname=value.symbol_name ng-if=getalljson.showactions></stock-actions> -->
+						<stock-actions savedactions=getalljson.savedactions stock=val.json_string[getalljson.bests_review].symbol stockname=val.json_string[getalljson.bests_review].symbol_name ng-if=getalljson.showactions action=getalljson.addaction keepopen=getalljson.showactions firstpair=val.json_string[getalljson.bests_review].first_pair secondpair=val.json_string[getalljson.bests_review].second_pair thejson=val.json_string rundate=val.run_date></stock-actions>
+
+						<stock-views savedactions=getalljson.savedactions stock=val.json_string[getalljson.bests_review].symbol stockname=val.json_string[getalljson.bests_review].symbol_name ng-if=getalljson.showviews showviews=getalljson.showviews firstpair=val.json_string[getalljson.bests_review].first_pair secondpair=val.json_string[getalljson.bests_review].second_pair></stock-views> 
+								
+								<div class="row">
+									<div class="col-md-4">
+										<table class="specialtable">
+										<thead>
+											<tr>
+												<th colspan="3">db data range</th>
+												<th ng-if="val.json_string[getalljson.bests_review].oldest_real_date_db!=val.json_string[getalljson.bests_review].oldest_date_db">oldest real</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>Date</td>
+												<td>{{val.json_string[getalljson.bests_review].newest_date_db}}</td>
+												<td>{{val.json_string[getalljson.bests_review].oldest_date_db}}</td>
+												<td ng-if="val.json_string[getalljson.bests_review].oldest_real_date_db!=val.json_string[getalljson.bests_review].oldest_date_db">{{val.json_string[getalljson.bests_review].oldest_real_date_db}}</td>
+
+											</tr>											
+											<tr>
+												<td>Rate</td>
+												<td>{{val.json_string[getalljson.bests_review].newest_date_db_shaar}}</td>
+												<td>{{val.json_string[getalljson.bests_review].oldest_date_db_shaar}}</td>
+												<td ng-if="val.json_string[getalljson.bests_review].oldest_real_date_db!=val.json_string[getalljson.bests_review].oldest_date_db">{{val.json_string[getalljson.bests_review].oldest_real_date_db_shaar}}</td>
+											</tr>
+										<tbody>    
+										</table>
+									</div>
+									<div class="col-md-3">
+										<table class="specialtable">
+										<thead>
+											<tr>
+												<th colspan="3">run period</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>Date</td>
+												<td>{{val.json_string[getalljson.bests_review].oldest_run_date}}</td>
+												<td>{{val.json_string[getalljson.bests_review].newest_run_date}}</td>
+											</tr>											
+											<tr>
+												<td>Rate</td>
+												<td>{{val.json_string[getalljson.bests_review].oldest_run_shaar}}</td>
+												<td>{{val.json_string[getalljson.bests_review].newest_run_shaar}}</td>
+											</tr>
+										<tbody>    
+										</table>
+									</div>
+									<div class="col-md-2">
+										<table class="specialtable">
+										<thead>
+											<tr>
+												<th colspan="2">Run Results</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>First Target Price %</td>
+												<td>{{val.json_string[getalljson.bests_review].first_target_price_percent}}</td>
+											</tr>												
+											<tr>
+												<td>Second Target Price %</td>
+												<td>{{val.json_string[getalljson.bests_review].second_target_price_percent}}</td>
+											</tr>
+											<tr>
+												<td>Gap Day Last %</td>
+												<td>{{val.json_string[getalljson.bests_review].gap_from_last_action_percent_to_newest_shaar}}</td>
+											</tr>
+										<tbody>    
+										</table>
+									</div>
+									<div class="col-md-2">
+										<table class="specialtable">
+										<thead>
+											<tr>
+												<th colspan="2">Run Results</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>Average Yield Per Trade (%)</td>
+												<td>{{val.json_string[getalljson.bests_review].memutza_klal_leiska}}</td>
+											</tr>	
+											<tr>
+												<td>Average Days Per Trade</td>
+												<td>{{val.json_string[getalljson.bests_review].average_days_per_trade}}</td>
+											</tr>												
+											<tr>
+												<td>Percent Holding Days</td>
+												<td>{{val.json_string[getalljson.bests_review].percent_holding_days}}</td>
+											</tr>
+											<tr>
+												<td>Positive Trades</td>
+												<td>{{val.json_string[getalljson.bests_review].positive_trades}}</td>
+											</tr>	
+											<tr>
+												<td>Negative Trades</td>
+												<td>{{val.json_string[getalljson.bests_review].negative_trades}}</td>
+											</tr>		
+										<tbody>    
+										</table>
+									</div>
+									
+								</div>
+								<div class="row col-centered"><button type="button" class="btn btn-default" ng-click="getalljson.theprev()"><div class="fa fa-arrow-left" ></div></button>
+						<button type="button" class="btn btn-warning btn-circle">{{getalljson.bests_review+1}}</button>
+						<button type="button" class="btn btn-default" ng-click="getalljson.thenext()"><div class="fa fa-arrow-right" ></div></button></div><br><br>
+								<div ng-init="getalljson.initgraphs()">
+									<div class="barchartdiv" style="width:120px">
+										 <nvd3 options="getalljson.graph01options" data="getalljson.graph01data"></nvd3>
+									</div>
+									<div class="barchartdiv" style="width:120px">
+										 <nvd3 options="getalljson.graph02options" data="getalljson.graph02data"></nvd3>
+									</div>									
+									<div class="barchartdiv" style="width:120px">
+										 <nvd3 options="getalljson.graph03options" data="getalljson.graph03data"></nvd3>
+									</div>									
+									<div class="barchartdiv" style="width:120px">
+										 <nvd3 options="getalljson.graph04options" data="getalljson.graph04data"></nvd3>
+									</div>
+									<div class="barchartdiv" style="width:210px;">
+										 <nvd3 options="getalljson.graph05options" data="getalljson.graph05data"></nvd3>
+									</div>
+									<div class="barchartdiv" style="width:210px">
+										 <nvd3 options="getalljson.graph06options" data="getalljson.graph06data"></nvd3>
+									</div>
+									<div class="barchartdiv" style="width:190px">
+										 <nvd3 options="getalljson.graph07options" data="getalljson.graph07data"></nvd3>
+									</div>
+									<div class="barchartdiv" style="width:190px">
+										 <nvd3 options="getalljson.graph08options" data="getalljson.graph08data"></nvd3>
+									</div>
+								</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<table class="specialtable">
+									<thead>
+										<tr>
+											<th>Date</th>
+											<th>Action</th>
+											<th>Rate</th>    
+											<th>--</th>    
+											<th>Date</th>    
+											<th>Action</th>    
+											<th>Rate</th>    
+											<th>Earning</th>    
+											<th>Accu. Earning</th>  
+											<th>Yield per Deal</th>    
+											<th>Accu. Yield</th>    
+											<th>Accu. Yield Neto</th>  
+											<th>Num of Holding Days</th>    
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="(key2,value1) in val.json_string[getalljson.bests_review].table track by $index" ng-class="{alt: $odd}">
+											<td><nobr>{{value1.buy_date}}</nobr></td>
+											<td>Buy</td>
+											<td>{{value1.buy_shaar}}</td>    
+											<td></td>    
+											<td><nobr>{{value1.sell_date}}</nobr></td>    
+											<td>{{value1.virtual == "no"?"Sell":"Virtual Sell"}}</td>    
+											<td>{{value1.sell_shaar}}</td>    
+											<td>{{value1.revach.toFixed(2)}}</td>    
+											<td>{{value1.revach_mitztaber}}</td>    
+											<td>{{value1.trade_yield}}</td>    
+											<td>{{value1.accumulated_yield}}</td>    
+											<td>{{value1.accumulated_yield_neto}}</td>    
+											<td>{{value1.holding_days}}</td>    
+										</tr>
+									</tbody>    
+									</table>
+
+								   
+
+								</div>
+							</div>
+							<p>
+							<div > <!-- ng-init="getalljson.getSavedBackDayRuns(value.symbol)" -->
+								<div ng-if="getalljson.savedbackdayrunsloaded">
+									<table class="specialtable">
+										<thead>
+											<tr>
+												<th>Buy Run Date</th>
+												<th>Buy Run Shaar</th>
+												<th>Buy Date</th>
+												<th>Buy Rate</th>
+												<th>Buy First Pair</th>
+												<th>Buy Second Pair</th>
+												<th>Sell Run Date</th>
+												<th>Sell Run Shaar</th>
+												<th>Sell Date</th>
+												<th>Sell Rate</th>
+												<th>Sell First Pair</th>
+												<th>Sell Second Pair</th>
+												<th>Yield Neto</th>    
+												<th>Accumulated Yield Neto</th>    
+											</tr>
+										</thead>
+										<tbody>
+											<tr ng-repeat="savedruns in getalljson.savedbackdaytrans track by $index" ng-class="{alt: $odd}">
+												<td>{{savedruns.buyrundate}}</td>
+												<td>{{savedruns.buyrunshaar}}</td>
+												<td>{{savedruns.buydate}}</td>
+												<td>{{savedruns.buyrate}}</td>
+												<td>{{savedruns.buy_first_pair}}</td>
+												<td>{{savedruns.buy_second_pair}}</td>
+												<td>{{savedruns.sellrundate}}</td>
+												<td>{{savedruns.sellrunshaar}}</td>
+												<td>{{savedruns.selldate}}</td>
+												<td>{{savedruns.sellrate}}</td>
+												<td>{{savedruns.sell_first_pair}}</td>
+												<td>{{savedruns.sell_second_pair}}</td> 
+												<td>{{savedruns.yield_neto}}</td> 
+												<td>{{savedruns.accumulated_yield_neto}} {{($last)?((savedruns.virtualsell===true)?"Virtual Sell":"Real Sell"):""}}</td> 
+											</tr>
+										</tbody>    
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="5" class="text-center">
+					<div st-pagination="" st-items-by-page="getalljson.itemsByPage" st-displayed-pages="10" style="cursor: pointer;"></div>
+				</td>
+				<!-- <td colspan="5" class="text-center">
+                        <div st-items-by-page="10" st-pagination="" st-template="views/pagination.custom.html"></div>
+                </td> -->
+			</tr>
+		</tfoot>
+	</table>
+	</div>
+</div>

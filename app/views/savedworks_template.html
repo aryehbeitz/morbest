@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Saved Works (move button on left to jump to showalljson view or dbl click on row + click on col header to sort)</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<style>
+.table {
+    font-size: 12px;
+}
+</style>
+<div ng-controller="SavedWorksCtrl as savedworks">
+    <div class="row" style="overflow-x:scroll; max-width:800;">
+        <table ng-if="savedworks.loaded" st-table="savedworks.rowCollection" class="table table-striped">
+            <thead>
+                <tr>
+                    <th ng-repeat="(key,row) in savedworks.headerRows track by $index">{{row}}</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <th colspan="10">
+                        <input st-search placeholder="global search" class="input-sm form-control" type="search" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in savedworks.rowCollection" ng-init="id=row.id" ng-click="savedworks.rowClick(id)">
+                    <td ng-repeat="rowName in savedworks.headerRows">{{row[rowName]}}</td>
+                    <td>
+                        <button type="button" ng-click="removeItem(row.id)" class="btn btn-sm btn-danger">
+                            <i class="glyphicon glyphicon-remove-circle">
+                            </i>
+                        </button>
+                    </td>
+
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <div st-items-by-page="10" st-pagination="" st-template="views/pagination.custom.html"></div>
+                    </td>
+                   <!--  <td colspan="5" class="text-center">
+                        <div st-pagination="" st-items-by-page="savedworks.itemsByPage" st-displayed-pages="10" style="cursor: pointer;"></div>
+                    </td> -->
+                </tr>
+            </tfoot>
+        </table>
+        <hr>test
+         <md-autocomplete
+                    md-selected-item="savedworks.selectedItem"
+                    md-search-text-change="savedworks.searchTextChange(savedworks.searchText)"
+                    md-search-text="savedworks.searchText"
+                    md-selected-item-change="savedworks.selectedItemChange(item)"
+                    md-items="item in savedworks.querySearch(savedworks.searchText)"
+                    md-item-text="item.display"
+                    md-min-length="0">
+        </md-autocomplete
+    </div>
+</div>

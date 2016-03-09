@@ -1,0 +1,152 @@
+<style>
+.close { /*text for delete selected etc*/
+	    font-size: 15px;
+}
+.todoTask {
+	background-color: #ffffff;
+	cursor:pointer;
+}.todoTask:hover {
+	background-color: lightblue;
+}
+.alt{
+	background-color: #fffffa;
+}
+
+	.list-group-item:hover {
+		background-color: lightblue;
+		cursor:pointer;
+	}
+	.selectgroup:hover {
+		background-color: yellow;
+	}
+	.groupbox {
+		z-index:99;
+		position:absolute;
+		/*border: 5px solid red;*/
+		background-color:white;
+	}
+.selectoutside {
+		width:100px;
+	    list-style-type: none;
+	    padding: 0;
+	    border: 1px solid #ddd;
+	}
+	.selectgroup {
+		background-color:white;
+	}
+	 .selectgroup:hover {
+	    background-color:green;
+	    cursor:pointer;
+	}
+	.selectoutside ,.selectgroup {
+	    padding: 2px 4px;
+	    border-bottom: 1px solid #ddd;
+	}
+
+	.selectoutside, .selectgroup:last-child {
+	    border-bottom: none
+	}
+</style>
+<div class="row" ng-controller="FavoritesCtrl as favorites" ng-init="favorites.init()">
+
+	<!-- HTMLJS
+	https://github.com/ghiden/angucomplete-alt
+	https://ghiden.github.io/angucomplete-alt/#example1 -->
+
+		<div class="row" ng-if=favorites.groupready>
+		<!-- list of groups -->
+			<div class="col-md-3">
+				<div class="list-group">
+					<!-- show option to add group -->
+					<span class="list-group-item">
+						<div class="input-group">
+							<input type="search" style="box-sizing: border-box;" class="form-control" placeholder="Add Category" ng-model="favorites.newCategory">
+							<span class="input-group-btn">
+								<button class="btn btn-default" type="button" ng-click="favorites.addNewCategory()">
+									<span class="fa fa-plus-square"></span>
+								</button>
+							</span> 
+						</div>
+					</span>
+					<!-- show list of groups -->
+					<span ng-repeat="todos in favorites.groups" class="list-group-item" ng-class="{'active' : favorites.currentShow === $index}" ng-click="favorites.changeTodo($index)">
+						<button type="button" ng-click="favorites.runItem($index)" class="btn btn-default btn-sm" style="padding: 1px 4px;">
+							<md-tooltip md-direction="top">
+								Update and Run Group "{{todos.name}}"
+							</md-tooltip>
+							<i class="fa fa-rocket" style="font: normal normal normal 10px/1 FontAwesome;"></i>
+						</button>
+						<span class="badge">
+							{{todos.count}}
+						</span>
+					{{todos.name}}
+					<span ng-if="favorites.currentlyRunning == $index">{{favorites.runningStatus}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+				<!-- to search in current select category -->
+					<div class="col-md-7">
+						<div class="input-group">
+						<input type="search" style="box-sizing: border-box;" class="form-control" placeholder="Search in current group" ng-model="favorites.todoSearch"><span class="input-group-btn"> <button class="btn btn-default" type="button" ng-model="favorites.todoSearch"><span class="glyphicon glyphicon-search"></span></button></span> 
+						</div>
+					</div>
+				</div>
+				<!-- place to enter comma delimited to add -->
+				<div class="row" style="padding-top:10px;">
+					<div class="col-md-7">
+						<div class="input-group">
+							<input type="search" style="box-sizing: border-box;" class="form-control" placeholder="Paste comma deliminated list of Stocks here" ng-model="favorites.pasteCsv"><span class="input-group-btn"> <button class="btn btn-default" type="button" ng-click="favorites.addCsv()"><span class="glyphicon glyphicon-plus"></span></button></span> 
+						</div>
+					</div>
+				</div>
+				<!-- this box is shown when click on plus to move between groups -->
+				<div class="row">
+					<div class="groupbox" ng-show="favorites.showgroups==true" ng-mouseleave="favorites.showgroups=false" ng-style="{left:favorites.left,top:favorites.top}"><ul class="selectoutside"><li class="selectgroup" ng-attr-id="{{groups.name}}" ng-repeat="groups in favorites.mygroups" ng-click="favorites.mouseUp(groups.name)">{{groups.name}}</li></ul></div>
+				</div>
+				<!-- buttons for multiple actions -->
+				<div class="row" style="padding-top:30px; height:50px;">
+					<span ng-if="favorites.showMultiActions == true && favorites.inBuySell() == false" class="todoTask" >
+						<!-- add and remove buttons (for selected)- when not in buy/sell groups -->
+							<button type="button" class="close pull-left" aria-hidden="true" ng-click="favorites.deleteTodoSelected()">Delete Selected &times;</button>
+							<button type="button" class="close pull-left" aria-hidden="true" ng-mousedown='favorites.mouseDown("","",$event)'>Add Selected to Group &#43;</button>
+							<button type="button" class="close pull-left" aria-hidden="true" ng-click='favorites.invertSelection()'> Invert Selection</button>
+					</span>
+					<span class="todoTask">
+						<!-- add and remove buttons (for selected)- when not in buy/sell groups -->
+							<button type="button" class="close pull-left" aria-hidden="true" ng-click='favorites.selectAll()'> Select All</button>
+					</span>
+				</div>
+				<!-- list of items in selected group -->
+				<div class="row" style="padding-top:10px;overflow-y: scroll;max-height: 500px;" ng-if="favorites.listReady==true">
+					<ul class="list-unstyled" ng-repeat="todos in favorites.groups track by $index"  ui-sortable="favorites.todoSortable" ng-model="todos.list" ng-show="$index === favorites.currentShow">
+
+						<li class="todoTask" ng-class="{alt: $odd}" ng-repeat="todo in todos.list | filter:showFn | filter :favorites.todoSearch ">
+							<input class="todoCheckbox" ng-model="todo.isDone" type="checkbox" ng-click="favorites.checks()">
+							<label class="todoCheckboxlabel" ></label>
+							<!-- {{todo}} -->
+							<!-- basic data we show always -->
+							{{todo.symbol}} {{todo.symbolname}} {{todo.newest_date}}-{{todo.oldest_date}} {{(todo.groupid==1 || todo.groupid==2)?(todo.actiondate + " " + todo.actualshaar + " " + todo.firstpair + " " + todo.secondpair):("")}}
+							<!-- add and remove buttons (individual)- when not in buy/sell groups -->
+							<span ng-if="todo.groupid != 2 && todo.groupid != 1" class="pull-right">
+								<button type="button" class="close pull-right" aria-hidden="true" ng-click="favorites.deleteTodo(todo)">&times;</button>
+								<button type="button" class="close pull-right" aria-hidden="true" ng-mousedown='favorites.mouseDown(todo.symbol, todo.groupname,$event)' >&#43;</button>
+							</span>
+						</li>
+					</ul>
+				</div>
+				<!-- json display of selected group for debug -->
+				<div class="row">
+					<div class="debug">
+						<p ng-if=0 class="text-info">{{ favorites.groups | json}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			
+		</div>
+
+</div>

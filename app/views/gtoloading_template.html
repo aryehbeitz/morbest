@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">GTO Loading</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<style>
+.table {
+    font-size: 12px;
+}
+</style>
+<div class="row" ng-controller="GtoLoadingCtrl as gtoloading">
+	<div class="col-md-12">
+	stock headers: {{gtoloading.stockheaders | json}}<br>
+	stock headers data: {{gtoloading.stockheaderdata | json}}<br>
+	<div style="direction:rtl">table headers: {{gtoloading.tableheaders | json}}</div>
+	</div>
+</div>

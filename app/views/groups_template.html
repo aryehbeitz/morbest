@@ -1,0 +1,51 @@
+<div ng-controller="GroupsCtrl as groups">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+			    <div class="panel-heading">
+			        Add Categories (as going in, show all stocks of all below) e.g 21411:nasdaq100 21412:s&p 500, when only 2141 show of both, with actions to run
+			    </div>
+			    <div class="panel-body">
+				    <div class="row">
+				    	<div class="col-md-2">
+					        <div class="input-group">
+					        	<label>Enter Special Code</label>
+					            <input class="form-control" ng-model-options="{debounce: 750}" ng-model="groups.code" placeholder="Code" ng-change="groups.codeChanged()">
+					        </div>
+				        </div>
+				    	<div class="col-md-5">
+					    	<label>Enter Special Code Name</label>
+				    		<input class="form-control" ng-model="groups.name" placeholder="Name" ng-change="groups.codeNameChanged()">
+				        </div>
+		            	<div class="col-md-5">
+		        	    	<label>Enter data</label>
+		            		<input class="form-control" ng-model="groups.data" placeholder="Data" ng-change="groups.codeNameChanged()">
+		                </div>
+			    	</div>
+				</div>
+				<div class="panel-footer" >
+					{{groups.returndata}}<br>{{groups.returndata1}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="panel panel-default">
+			    <div class="panel-heading">
+			        Saved Stuff
+			    </div>
+			    <div class="panel-body">
+				    <div class="row" ng-init="groups.loadData()">
+				    	<div class="col-md-12" ng-if="groups.aresaved==true">
+					    	<p style="direction:rtl" ng-repeat="row in groups.saved">{{row.text}}</p>
+				        </div>
+			    	</div>
+				</div>
+				<div class="panel-footer">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

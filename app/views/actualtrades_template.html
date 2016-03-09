@@ -1,0 +1,71 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Actual Trades</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<style>
+.table {
+    font-size: 12px;
+}
+.specialtable
+{
+    font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+    width:100%;
+    border-collapse:collapse;
+}
+.specialtable td, .specialtable th {
+    font-size:1.2em;
+    border:1px solid #98bf21;
+    padding:3px 7px 2px 7px;
+    white-space: nowrap;
+}
+.specialtable th {
+    font-size:1.1em;
+    text-align:left;
+    padding-top:5px;
+    padding-bottom:4px;
+    background-color:#A7C942;
+    /*color:#fff;*/
+    color: #000;
+    white-space: nowrap;
+}
+.specialtable tr.alt td {
+    color:#000;
+    background-color:#EAF2D3;
+}
+</style>
+we need to look in json. then check actual latest db. if db date is newer, then do run for the pair. then check action and date of action. must be date of action: 1. oppisite (if we did real buy, we want to find a sell and oppisite), 2. date of action is after this date of action
+
+<div class="row" ng-controller="ActualTradesCtrl as actualtrades">
+    <table class="specialtable" ng-if=actualtrades.loaded>
+        <thead>
+            <tr>
+                <th>Symbol</th>  
+                <th>Symbol Name</th>  
+                <th>Run Date</th>  
+                <th>Action</th>
+                <th>Action Date</th>
+                <th>Rate</th>    
+                <th>First Pair</th>    
+                <th>Second Pair</th>    
+                <th>Date Newest db</th>    
+                <th>Shaar Newest db</th>    
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(key,val) in actualtrades.data" ng-class="{alt: $odd}">
+                <td>{{val.symbol}}</td>
+                <td>{{val.symbol_name}}</td>
+                <td>{{val.run_date}}</td>
+                <td>{{val.action}}</td>
+                <td>{{val.action_date}}</td>
+                <td>{{val.actual_shaar}}</td>
+                <td>{{val.first_pair}}</td>
+                <td>{{val.second_pair}}</td>
+                <td>{{val.newest_date_db}}</td>
+                <td>{{val.newest_shaar_db}}</td>
+            </tr>
+        </tbody>    
+    </table>
+</div>
