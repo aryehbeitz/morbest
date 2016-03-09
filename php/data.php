@@ -8,6 +8,7 @@ function do_connection()
         }
         return $link;
 }
+
 function run_query($link, $query)
 {
 	$result = mysqli_query($link, $query) or trigger_error("Query Failed! SQL: $sql - Error: ".mysqli_error(), E_USER_ERROR);
