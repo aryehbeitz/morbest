@@ -42,6 +42,7 @@ if ($request_url == 'SetCookie') {
 	echo $CookieString;
 }
 if ($request_url == 'GetCookie') {
+	if (!isset($md5)) die("didn't get valid md5 variable to look up");
 	$query="SELECT `CookieID` FROM `Cookies` WHERE `CookieString` = '$md5'";
 	// echo $query;
 	$row = get_query_data($link, $query);
@@ -75,6 +76,7 @@ if ($request_url == 'calcservice') {
 if ($request_url == 'getquestions') {
 	$query = "SELECT `answers`.`QuestionID`, `answers`.`AnswerNum`, `answers`.`ShortAnswerDes`, `answers`.`AnswerDes`, `answers`.`AnswerVar`, `answers`.`Weight`, `questions`.`QuestionDes`, `questions`.`min_weight`, `questions`.`max_weight`, `questions`.`q_name` FROM `answers` LEFT JOIN `questions` ON `answers`.`QuestionID`=`questions`.`QuestionID` order by questionid asc, answernum asc";
 	$our_data = get_query_data($link, $query);
+	debugData("\nGot request $request_url. Executed query: $query. received: " . json_encode($our_data));
 	echo json_encode($our_data,true);
 }
 if ($request_url == 'getuseranswers') {
@@ -211,4 +213,7 @@ function calculate_sd_annual_data($link, $bm_number) {
 	//output into benchmark_results
 	//lookup in benchmark_data where benchmark_number=$bm_number
 
+}
+function debugData($message) {
+	file_put_contents("debug.txt", $message, FILE_APPEND);
 }

@@ -12,13 +12,13 @@ angular.module('sbAdminApp')
         maslulim.maslulimData = {};
         maslulim.selectedMaslul = "";
         //creates 3 variables:
-        // $rootScope.cookieMd5
-        // $rootScope.cookieSet
-        // $rootScope.userId
+        // localStorage.cookieMd5
+        // localStorage.cookieSet
+        // localStorage.userId
         dataService.cookieInit();
 
         maslulim.updateMaslul = function() {
-            var query = "UPDATE `cookies` SET `selected_plan` = '" + maslulim.selectedMaslul + "' WHERE `CookieID`='" + $rootScope.userId + "'";
+            var query = "UPDATE `cookies` SET `selected_plan` = '" + maslulim.selectedMaslul + "' WHERE `CookieID`='" + localStorage.userId + "'";
             dataService.serverSend('testingservice',{"query":query});
         }
 
@@ -29,6 +29,16 @@ angular.module('sbAdminApp')
             }
             // maslulim.rank.toFixed(2);
             maslulim.rank.round(2);
+            var chart = $('#container').highcharts();
+            var point = chart.series[0].points[0];
+            point.update(maslulim.rank);
+            // maslulim.chart.series[0].data[0] = maslulim.rank;
+            // chart.redraw();
+            // debugger;
+            // $('#container').highcharts(maslulim.chart, function (chart) {
+            //     var point = chart.series[0].points[0];
+            //     point.update(maslulim.rank);
+            // });
         }        
         maslulim.Theprev = Theprev;
         function Theprev () {
@@ -38,24 +48,36 @@ angular.module('sbAdminApp')
             }
             // maslulim.rank.toFixed(2);
             maslulim.rank.round(2);
+            var chart = $('#container').highcharts();
+            var point = chart.series[0].points[0];
+            point.update(maslulim.rank);
+            // $('#container').highcharts(maslulim.chart, function (chart) {
+            //     var point = chart.series[0].points[0];
+            //     point.update(maslulim.rank);
+            // });
         }
 
         maslulim.data_ready = false;
         
-        $rootScope.cookieMd5 = $cookies.pma;
-        dataService.serverSend('GetCookie', {"md5":$rootScope.cookieMd5}) //send md5, receives id
+        localStorage.cookieMd5 = localStorage.pma;
+        dataService.serverSend('GetCookie', {"md5":localStorage.cookieMd5}) //send md5, receives id
         .then(function(response) {
-            $rootScope.userId = response.data;
-            console.log("user " + $rootScope.userId + " retrieved");
-            $rootScope.cookieSet = true;
-        if ($rootScope.cookieSet) {
-            var query = "SELECT `client_rank` FROM `cookies` WHERE `CookieID`='" + $rootScope.userId + "'";
+            localStorage.userId = response.data;
+            console.log("user " + localStorage.userId + " retrieved");
+            localStorage.cookieSet = true;
+        if (localStorage.cookieSet) {
+            var query = "SELECT `client_rank` FROM `cookies` WHERE `CookieID`='" + localStorage.userId + "'";
             console.log(query);
             dataService.serverSend('testingservice',{"query":query})
             .then(function(response) {
                 console.log(response.data);
                 var data = response.data;
-                maslulim.client_rank = data[0][0].client_rank;
+                try {
+                    maslulim.client_rank = data[0][0].client_rank;
+                }
+                catch(err) {
+                    maslulim.client_rank = 0;
+                }
                 maslulim.rank = parseFloat(maslulim.client_rank);
                 maslulim.rank = maslulim.rank.round(2);// = parseFloat(maslulim.client_rank);
                 var query = "SELECT `annual_yield` FROM `benchmark_results` WHERE benchmark_number=1";
@@ -153,10 +175,111 @@ angular.module('sbAdminApp')
                             console.log(data_holder);
                             maslulim.data_ready = true;
                             console.log(maslulim.data_ready);
+                            //now that everything is ready, let load the chart
+                            maslulim.chart = {
+                                chart: {
+                                    type: 'gauge',
+                                    plotBackgroundColor: null,
+                                    plotBackgroundImage: null,
+                                    plotBorderWidth: 0,
+                                    plotShadow: false
+                                },
+
+                                title: {
+                                    text: 'Client Risk Rank'
+                                },
+
+                                pane: {
+                                    startAngle: -150,
+                                    endAngle: 150,
+                                    background: [{
+                                        backgroundColor: {
+                                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                            stops: [
+                                                [0, '#FFF'],
+                                                [1, '#333']
+                                            ]
+                                        },
+                                        borderWidth: 0,
+                                        outerRadius: '109%'
+                                    }, {
+                                        backgroundColor: {
+                                            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                            stops: [
+                                                [0, '#333'],
+                                                [1, '#FFF']
+                                            ]
+                                        },
+                                        borderWidth: 1,
+                                        outerRadius: '107%'
+                                    }, {
+                                        // default background
+                                    }, {
+                                        backgroundColor: '#DDD',
+                                        borderWidth: 0,
+                                        outerRadius: '105%',
+                                        innerRadius: '103%'
+                                    }]
+                                },
+
+                                // the value axis
+                                yAxis: {
+                                    min: 0,
+                                    max: 10,
+
+                                    minorTickInterval: 'auto',
+                                    minorTickWidth: 1,
+                                    minorTickLength: 10,
+                                    minorTickPosition: 'inside',
+                                    minorTickColor: '#666',
+
+                                    tickPixelInterval: 30,
+                                    tickWidth: 2,
+                                    tickPosition: 'inside',
+                                    tickLength: 1,
+                                    tickColor: '#666',
+                                    labels: {
+                                        step: 2,
+                                        rotation: 'auto'
+                                    },
+                                    title: {
+                                        text: '' //km/h
+                                    },
+                                    plotBands: [{
+                                        from: 0,
+                                        to: 4,
+                                        color: '#55BF3B' // green
+                                    }, {
+                                        from: 4.01,
+                                        to: 7,
+                                        color: '#DDDF0D' // yellow
+                                    }, {
+                                        from: 7.01,
+                                        to: 10,
+                                        color: '#DF5353' // red
+                                    }]
+                                },
+
+                                series: [{
+                                    name: '',//Speed
+                                    data: [maslulim.rank],
+                                    tooltip: {
+                                        valueSuffix: ' '//km/h
+                                    }
+                                }]
+
+                            };
+                            //end var chart
+                            // debugger;
+                                $('#container').highcharts(maslulim.chart, function (chart) {
+                                    var point = chart.series[0].points[0];
+                                    point.update(maslulim.rank);
+                                } );
+                           
                          }
                        });
                     });
             });
         }
     });
-        }]);
+}]);

@@ -1,9 +1,9 @@
 'use strict';
 angular.module('sbAdminApp').factory('dataService', dataService);
 
-dataService.$inject = ['$rootScope', '$http', '$q', '$filter', '$timeout', '$cookies'];
+dataService.$inject = ['$rootScope', '$http', '$q', '$filter', '$timeout'];
 
-function dataService($rootScope, $http, $q, $filter, $timeout, $cookies) {
+function dataService($rootScope, $http, $q, $filter, $timeout) {
 
     activate();
 
@@ -36,37 +36,45 @@ function dataService($rootScope, $http, $q, $filter, $timeout, $cookies) {
     // $rootScope.userId
     
     function cookieInit() {
-        if (typeof $rootScope.cookieSet === 'undefined' || $rootScope.cookieSet == false) {//first time
-            $rootScope.cookieSet = false;
-            $rootScope.cookieMd5 = "";
-            $rootScope.userId = -1;
 
-            if (typeof $cookies.pma === 'undefined') { // no cookies set yet
+        // debugger;
+        if (typeof localStorage.cookieSet === 'undefined' || localStorage.cookieSet == false) {//first time
+            localStorage.cookieSet = false;
+            localStorage.cookieMd5 = "";
+            localStorage.userId = -1;
+
+            if (typeof localStorage.pma === 'undefined') { // no cookies set yet
                 //no cookie exists, so create
+                console.log("no cookie found, creating");
                 var milli = Date.now();
                 var ourcookie = milli;
                 var md5 = "";
                 serverSend('SetCookie', {"milli":milli}) //sends milliseconds, retuns md5, sets cookie to md5
                 .then(function(response) {
                     md5 = response.data;
+                    console.log("received md5 set on server as " + md5 + ", trying to set cookie");
+
                     if (md5.length == 32) {//md5
-                        $cookies.pma = md5; //sets cookie
+                        localStorage.pma = md5; //sets cookie
                         serverSend('GetCookie', {"md5":md5}) //send md5, receives id
                         .then(function(response) {
-                            $rootScope.cookieMd5 = md5;
-                            $rootScope.userId = response.data;
-                            $rootScope.cookieSet = true;
+                            localStorage.cookieMd5 = md5;
+                            localStorage.userId = response.data;
+                            localStorage.cookieSet = true;
+                            console.log("set cookie. it's saved value is: " + localStorage.pma +". userid received: " + response.data);
+
                         });
                     }
                 });    
             }
             else { //cookie set, retrieve
-                $rootScope.cookieMd5 = $cookies.pma;
-                serverSend('GetCookie', {"md5":$rootScope.cookieMd5}) //send md5, receives id
+                localStorage.cookieMd5 = localStorage.pma;
+                console.log("it seems like we have a cookie: " + localStorage.pma);
+                serverSend('GetCookie', {"md5":localStorage.cookieMd5}) //send md5, receives id
                 .then(function(response) {
-                    $rootScope.userId = response.data;
-                    console.log("user " + $rootScope.userId + " retrieved");
-                    $rootScope.cookieSet = true;
+                    localStorage.userId = response.data;
+                    console.log("user " + localStorage.userId + " retrieved");
+                    localStorage.cookieSet = true;
                 });
             }
         }

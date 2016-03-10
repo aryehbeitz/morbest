@@ -5,13 +5,6 @@
 function do_connection()
 {
         include_once("local_settings/mysettings.php");
-        //$link = mysqli_connect('localhost', 'root', 'SjKRpeBQho2j', 'hondar');//laptop connection
-        //$link_h = mysqli_connect('localhost', 'root', 'SjKRpeBQho2j', 'hebrew_list');//laptop connection
-
-        //$link = mysqli_connect('localhost', 'root', '', 'hondor_admin');//laptop connection
-        //$link_list = mysqli_connect('localhost', 'root', '', 'stocks_list');//laptop connection        
-        // $link_pma = mysqli_connect('localhost', 'root', '', 'pma');//laptop connection        
-        // $link_pma = mysqli_connect('localhost', 'php_user', 'K4dWef5oEuNH5RW', 'pma');//laptop connection        
         $link_pma = mysqli_connect('localhost', $username, $password, 'pma');//laptop connection        
         /* check connection */
         if (mysqli_connect_errno()) {
