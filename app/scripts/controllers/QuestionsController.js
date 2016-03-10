@@ -1,12 +1,12 @@
 'use strict';
 angular.module('sbAdminApp')
-.controller('QuestionsCtrl', ['$rootScope', '$filter', '$scope', '$timeout', '$http', 'dataService', '$state', '$stateParams', '$animate', '$cookies', '$cookieStore', function($rootScope, $filter, $scope, $timeout, $http, dataService, $state, $stateParams, $animate, $cookies, $cookieStore) {
+.controller('QuestionsCtrl', ['$filter', '$scope', '$timeout', '$http', 'dataService', '$state', '$stateParams', '$animate', '$cookies', '$cookieStore', function($filter, $scope, $timeout, $http, dataService, $state, $stateParams, $animate, $cookies, $cookieStore) {
     var q = this;
 
     //creates 3 variables:
-    // $rootScope.cookieMd5
-    // $rootScope.cookieSet
-    // $rootScope.userId
+    // localStorage.cookieMd5
+    // localStorage.cookieSet
+    // localStorage.userId
     // debugger;
     dataService.cookieInit();
 
@@ -37,7 +37,6 @@ angular.module('sbAdminApp')
     //here we set the question to start after
     q.qNumber=0;
     q.answeredQuestions = [];
-    
     loadData();
     q.aa = function() {
 
@@ -47,7 +46,7 @@ angular.module('sbAdminApp')
         q.firstQuestion[index].is_marked = item.is_open; //good
         q.q_a[q.qNumber].the_answer = q.firstQuestion;
 
-        dataService.serverSend("updateUserAnswer", {userId: $rootScope.userId, questionId: q.q_a[q.qNumber].question_id, shortAnswer: JSON.stringify(q.q_a[q.qNumber].the_answer), updateDate:Date.now()})
+        dataService.serverSend("updateUserAnswer", {userId: localStorage.userId, questionId: q.q_a[q.qNumber].question_id, shortAnswer: JSON.stringify(q.q_a[q.qNumber].the_answer), updateDate:Date.now()})
         .then(function(response) {
             var onemarked = false;
             for (var i=0; i< q.q_a[q.qNumber].the_answer.length; i++) {
@@ -129,9 +128,13 @@ angular.module('sbAdminApp')
     }
    
     function loadData() {
+        console.log("started loadData(), asking server for questions");
+
         //load a list of all questions, answers from database
         dataService.serverSend('getquestions',{})//this loads questions
         .then(function(response) {
+            console.log("received response: ")
+            console.log(response.data)
             var data = response.data;
             // console.log(data);
 
@@ -176,8 +179,8 @@ angular.module('sbAdminApp')
             q.q_a=newdata;
             q.NumQuestions = Object.keys(q.q_a).length;
             q.dataloaded = true;
-            if ($rootScope.cookieSet) { //if we are logged in, load saved answers
-                dataService.serverSend('getuseranswers',{userId:$rootScope.userId})
+            if (localStorage.cookieSet) { //if we are logged in, load saved answers
+                dataService.serverSend('getuseranswers',{userId:localStorage.userId})
                 .then(function(response) {
                     var userData = response.data;
 
@@ -251,7 +254,7 @@ angular.module('sbAdminApp')
     }
     //calculates risk
     function calcRisk() {
-        var userid = $rootScope.userId;
+        var userid = localStorage.userId;
         //takes weight from age answer
         q.totalrisk = parseFloat(q.q_a[1].questions[0].q_weight);
         var j;
@@ -281,7 +284,7 @@ angular.module('sbAdminApp')
             if (q.q_a[q.qNumber].questions[j].short_q_name == selected) {
                 //find question and its answer
                 //update the answer on the server. this should be called only once per click
-                dataService.serverSend("updateUserAnswer", {userId: userid, questionId: q.q_a[q.qNumber].questions[j].question_id, shortAnswer: q.q_a[q.qNumber].questions[j].short_q_name, updateDate:Date.now(), totalrisk:q.totalrisk, clientrank:q.clientRank, cookieid:$rootScope.userId})
+                dataService.serverSend("updateUserAnswer", {userId: userid, questionId: q.q_a[q.qNumber].questions[j].question_id, shortAnswer: q.q_a[q.qNumber].questions[j].short_q_name, updateDate:Date.now(), totalrisk:q.totalrisk, clientrank:q.clientRank, cookieid:localStorage.userId})
                 .then(function(response) {
                     q.answeredQuestions[q.qNumber] = 1;
 

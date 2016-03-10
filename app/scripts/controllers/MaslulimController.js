@@ -27,18 +27,10 @@ angular.module('sbAdminApp')
             if (maslulim.rank < 9.50 ) {
                 maslulim.rank += 0.25;
             }
-            // maslulim.rank.toFixed(2);
-            maslulim.rank.round(2);
+            maslulim.rank = maslulim.rank.round(1);
             var chart = $('#container').highcharts();
             var point = chart.series[0].points[0];
             point.update(maslulim.rank);
-            // maslulim.chart.series[0].data[0] = maslulim.rank;
-            // chart.redraw();
-            // debugger;
-            // $('#container').highcharts(maslulim.chart, function (chart) {
-            //     var point = chart.series[0].points[0];
-            //     point.update(maslulim.rank);
-            // });
         }        
         maslulim.Theprev = Theprev;
         function Theprev () {
@@ -46,15 +38,10 @@ angular.module('sbAdminApp')
             if (maslulim.rank > 0.25 ) {
                 maslulim.rank -= 0.25;
             }
-            // maslulim.rank.toFixed(2);
-            maslulim.rank.round(2);
+            maslulim.rank = maslulim.rank.round(1);
             var chart = $('#container').highcharts();
             var point = chart.series[0].points[0];
             point.update(maslulim.rank);
-            // $('#container').highcharts(maslulim.chart, function (chart) {
-            //     var point = chart.series[0].points[0];
-            //     point.update(maslulim.rank);
-            // });
         }
 
         maslulim.data_ready = false;
