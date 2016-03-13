@@ -18,14 +18,14 @@ angular
     // 'ui.bootstrap',
     'angular-loading-bar',
     // 'leonardo',
-    'smart-table',
+    // 'smart-table',
     // 'ngMaterial',
-    'ngCookies',
+    // 'ngCookies',
     'ngAria',
     // 'ngAnimate',
     'datatables',
     'ngComboDatePicker',
-    'nvd3',
+    // 'nvd3',
     // 'ngDragDrop',
     // 'ui.sortable',
     // 'LocalStorageModule',
@@ -36,7 +36,7 @@ angular
      // 'angular-datatables',
     // 'ngTable',
     // 'jsonFormatter'
-     'autocomplete'
+     // 'autocomplete'
   ])
   .config(['$httpProvider','$stateProvider','$urlRouterProvider','$ocLazyLoadProvider',function ($httpProvider,$stateProvider,$urlRouterProvider,$ocLazyLoadProvider) {
     $ocLazyLoadProvider.config({

@@ -1,6 +1,6 @@
 'use strict';
 angular.module('sbAdminApp')
-.controller('QuestionsCtrl', ['$filter', '$scope', '$timeout', '$http', 'dataService', '$state', '$stateParams', '$animate', '$cookies', '$cookieStore', function($filter, $scope, $timeout, $http, dataService, $state, $stateParams, $animate, $cookies, $cookieStore) {
+.controller('QuestionsCtrl', ['$q', '$filter', '$scope', '$timeout', '$http', 'dataService', '$state', '$stateParams', '$animate',  function($q, $filter, $scope, $timeout, $http, dataService, $state, $stateParams, $animate) {
     var q = this;
 
     //creates 3 variables:
@@ -8,12 +8,14 @@ angular.module('sbAdminApp')
     // localStorage.cookieSet
     // localStorage.userId
     // debugger;
-    dataService.cookieInit();
+    // dataService.cookieInit();
+
 
     $animate.enabled(false);
 
     q.loadData = loadData
-    q.calcRisk = calcRisk;
+    // q.calcRisk = calcRisk;
+    q.clickAnswer = clickAnswer;
     q.Next = Next;
     q.Prev = Prev;
     q.toggle = toggle;
@@ -77,7 +79,7 @@ angular.module('sbAdminApp')
     }
 
     $scope.$watch('q.birth_date', function (newValue) {
-        console.log("watch called " + q.dataloaded + " " + newValue)
+        // console.log("watch called " + q.dataloaded + " " + newValue)
         if (q.dataloaded == true &&  typeof newValue !== 'undefined') {
              q.checkDate();
         }
@@ -94,7 +96,7 @@ angular.module('sbAdminApp')
     function checkDate(){//calcs score for first date
         //only for question 1
         if (q.qNumber != 1) {
-            console.log("exiting");
+            // console.log("exiting");
             return;
         }
         var birth_day = q.birth_date.getDate();
@@ -128,111 +130,115 @@ angular.module('sbAdminApp')
     }
    
     function loadData() {
-        console.log("started loadData(), asking server for questions");
+        // console.log("started loadData(), asking server for questions");
+        dataService.cookieInit()
+            .then(function(response) {
+                localStorage.userId = parseInt(response.data);
+                localStorage.cookieSet = true;
+            //load a list of all questions, answers from database
+            dataService.serverSend('getquestions',{})//this loads questions
+            .then(function(response) {
+                // console.log("received response: ")
+                // console.log(response.data)
+                var data = response.data;
+                // console.log(data);
 
-        //load a list of all questions, answers from database
-        dataService.serverSend('getquestions',{})//this loads questions
-        .then(function(response) {
-            console.log("received response: ")
-            console.log(response.data)
-            var data = response.data;
-            // console.log(data);
+                q.min_weight=0;
+                q.max_weight=0;
+                var len = data.length;
+                var newdata = [];
+                var k;
+                for (var i=0; i<len; ) {
+                    var q_id = data[i].QuestionID;
+                    var obj = {};
+                    obj["question_id"] = data[i].QuestionID;
+                    obj["internal_name"] = data[i].q_name;
+                    obj["description"] = data[i].QuestionDes;
+                    obj["min_weight"] = data[i].min_weight;
+                    q.min_weight+=parseFloat(data[i].min_weight);
+                    q.max_weight+=parseFloat(data[i].max_weight);
+                    obj["max_weight"] = data[i].max_weight;
+                    if (i==0) obj["the_answer"] = [];
+                    else obj["the_answer"] = "";
 
-            q.min_weight=0;
-            q.max_weight=0;
-            var len = data.length;
-            var newdata = [];
-            var k;
-            for (var i=0; i<len; ) {
-                var q_id = data[i].QuestionID;
-                var obj = {};
-                obj["question_id"] = data[i].QuestionID;
-                obj["internal_name"] = data[i].q_name;
-                obj["description"] = data[i].QuestionDes;
-                obj["min_weight"] = data[i].min_weight;
-                q.min_weight+=parseFloat(data[i].min_weight);
-                q.max_weight+=parseFloat(data[i].max_weight);
-                obj["max_weight"] = data[i].max_weight;
-                if (i==0) obj["the_answer"] = [];
-                else obj["the_answer"] = "";
-
-                obj["index"] = i;
-                obj["image"] = "http://lorempixel.com/602/300";
-                obj["questions"] = [];
-                for(var k=0,j=i; j<len && data[j].QuestionID == q_id; j++, i++, k++) {
-                    obj.questions.push({
-                        "question_id":data[j].QuestionID,
-                        "short_q_name":data[j].AnswerVar, 
-                        "q_weight":data[j].Weight, 
-                        "long_q_name":data[j].ShortAnswerDes, 
-                        "is_open":false, 
-                        "is_marked":false, 
-                        "q_name":data[j].q_name,
-                        "long_des":data[j].AnswerDes,
-                        "b_date_month":"",
-                        "b_date_year":"",
-                        "its_id":k
-                    });
+                    obj["index"] = i;
+                    obj["image"] = "http://lorempixel.com/602/300";
+                    obj["questions"] = [];
+                    for(var k=0,j=i; j<len && data[j].QuestionID == q_id; j++, i++, k++) {
+                        obj.questions.push({
+                            "question_id":data[j].QuestionID,
+                            "short_q_name":data[j].AnswerVar, 
+                            "q_weight":data[j].Weight, 
+                            "long_q_name":data[j].ShortAnswerDes, 
+                            "is_open":false, 
+                            "is_marked":false, 
+                            "q_name":data[j].q_name,
+                            "long_des":data[j].AnswerDes,
+                            "b_date_month":"",
+                            "b_date_year":"",
+                            "its_id":k
+                        });
+                    }
+                    newdata.push(obj);
                 }
-                newdata.push(obj);
-            }
-            q.q_a=newdata;
-            q.NumQuestions = Object.keys(q.q_a).length;
-            q.dataloaded = true;
-            if (localStorage.cookieSet) { //if we are logged in, load saved answers
-                dataService.serverSend('getuseranswers',{userId:localStorage.userId})
-                .then(function(response) {
-                    var userData = response.data;
+                q.q_a=newdata;
+                q.NumQuestions = Object.keys(q.q_a).length;
+                q.dataloaded = true;
+                if (localStorage.cookieSet) { //if we are logged in, load saved answers
+                    dataService.serverSend('getuseranswers',{userId:localStorage.userId})
+                    .then(function(response) {
+                        var userData = response.data;
 
-                    for (i=0; i<userData.length; i++) {
-                        for (var j=0; j<q.q_a.length; j++) {
-                            //find the question
-                            if (userData[i].QuestionId == q.q_a[j].question_id) {
-                                if (userData[i].QuestionId == 1) {
-                                    // console.log(userData[i].shortAnswer);
-                                    // debugger;
-                                    try {
-                                        q.firstQuestion = JSON.parse(userData[i].shortAnswer);
+                        for (i=0; i<userData.length; i++) {
+                            for (var j=0; j<q.q_a.length; j++) {
+                                //find the question
+                                if (userData[i].QuestionId == q.q_a[j].question_id) {
+                                    if (userData[i].QuestionId == 1) {
+                                        // console.log(userData[i].shortAnswer);
+                                        // debugger;
+                                        try {
+                                            q.firstQuestion = JSON.parse(userData[i].shortAnswer);
+                                            q.answeredQuestions[j] = 1;
+                                        }
+                                        catch(err) {
+                                            //not marked or saved, so mark as unanswered
+                                            q.answeredQuestions[j] = undefined;
+                                            q.firstQuestion = [{is_marked:false},{is_marked:false},{is_marked:false},{is_marked:false}];
+                                        }
+                                        for (var k=0; k<q.firstQuestion.length; k++) {
+                                            q.q_a[j].questions[k].is_open = q.firstQuestion[k].is_marked;
+                                        }
+
+                                    }
+                                    //age question
+                                    if (userData[i].QuestionId == 2) {
+                                        //age question
+                                        //load date for second question
+                                        console.log("date answer");
+                                        console.log(userData[i].shortAnswer);
+                                        var user_dob = JSON.parse(userData[i].shortAnswer); //load date
+                                        //loads DOB
+                                        if (Object.keys(user_dob).length) {
+                                            if (q.birth_date != q.max_date) {
+                                                q.answeredQuestions[j] = 1;
+                                            } 
+
+                                            q.birth_date = new Date(user_dob.year, parseInt(user_dob.month)-1, user_dob.day);
+                                        }
+                                    }
+                                    // console.log("loading question " + i + " which is id " + userData[i].QuestionId + " and the saved answer is " + userData[i].shortAnswer);
+                                    q.q_a[j].the_answer = userData[i].shortAnswer;
+                                    console.log(j);
+                                    console.log(q.q_a[j].the_answer.length)
+                                    if (q.q_a[j].the_answer.length) {
                                         q.answeredQuestions[j] = 1;
                                     }
-                                    catch(err) {
-                                        //not marked or saved, so mark as unanswered
-                                        q.answeredQuestions[j] = undefined;
-                                        q.firstQuestion = [{is_marked:false},{is_marked:false},{is_marked:false},{is_marked:false}];
-                                    }
-                                    for (var k=0; k<q.firstQuestion.length; k++) {
-                                        q.q_a[j].questions[k].is_open = q.firstQuestion[k].is_marked;
-                                    }
-
-                                }
-                                //age question
-                                if (userData[i].QuestionId == 2) {
-                                    //age question
-                                    //load date for second question
-                                    console.log("date answer");
-                                    console.log(userData[i].shortAnswer);
-                                    var user_dob = JSON.parse(userData[i].shortAnswer); //load date
-                                    //loads DOB
-                                    if (Object.keys(user_dob).length) {
-                                        if (q.birth_date != q.max_date) {
-                                            q.answeredQuestions[j] = 1;
-                                        } 
-
-                                        q.birth_date = new Date(user_dob.year, parseInt(user_dob.month)-1, user_dob.day);
-                                    }
-                                }
-                                // console.log("loading question " + i + " which is id " + userData[i].QuestionId + " and the saved answer is " + userData[i].shortAnswer);
-                                q.q_a[j].the_answer = userData[i].shortAnswer;
-                                console.log(j);
-                                console.log(q.q_a[j].the_answer.length)
-                                if (q.q_a[j].the_answer.length) {
-                                    q.answeredQuestions[j] = 1;
                                 }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     }
     //button to move to next question
@@ -251,6 +257,10 @@ angular.module('sbAdminApp')
             q.qNumber--;
             // checkDate();
         }
+    }
+    function clickAnswer() {
+        calcRisk();
+        Next();
     }
     //calculates risk
     function calcRisk() {

@@ -8,6 +8,7 @@ function dataService($rootScope, $http, $q, $filter, $timeout) {
     activate();
 
     return {
+        languageStrings : languageStrings,
         serverSend : serverSend,
         cookieInit : cookieInit
     };
@@ -16,6 +17,11 @@ function dataService($rootScope, $http, $q, $filter, $timeout) {
 
     }
     //___host is defined in mysettings.js, included in index.html
+    function languageStrings() {
+        //this retreives all language strings and saves them as variables
+        var currentLanguage = "English";
+        return serverSend("get_i18l", {language:currentLanguage});
+    }
     function serverSend(rq_url, data) {
         var _url = 'http://' + ___host + '/php/server_morbest_json.php';
         var _params = {
@@ -36,59 +42,19 @@ function dataService($rootScope, $http, $q, $filter, $timeout) {
     // $rootScope.userId
     
     function cookieInit() {
-
-        // debugger;
-        if (typeof localStorage.cookieSet === 'undefined' || localStorage.cookieSet == false) {//first time
-            localStorage.cookieSet = false;
-            localStorage.cookieMd5 = "";
-            localStorage.userId = -1;
-
-            if (typeof localStorage.pma === 'undefined') { // no cookies set yet
-                //no cookie exists, so create
-                console.log("no cookie found, creating");
-                var milli = Date.now();
-                var ourcookie = milli;
-                var md5 = "";
-                serverSend('SetCookie', {"milli":milli}) //sends milliseconds, retuns md5, sets cookie to md5
-                .then(function(response) {
-                    md5 = response.data;
-                    console.log("received md5 set on server as " + md5 + ", trying to set cookie");
-
-                    if (md5.length == 32) {//md5
-                        localStorage.pma = md5; //sets cookie
-                        serverSend('GetCookie', {"md5":md5}) //send md5, receives id
-                        .then(function(response) {
-                            localStorage.cookieMd5 = md5;
-                            localStorage.userId = response.data;
-                            localStorage.cookieSet = true;
-                            console.log("set cookie. it's saved value is: " + localStorage.pma +". userid received: " + response.data);
-
-                        });
-                    }
-                });    
-            }
-            else { //cookie set, retrieve
-                localStorage.cookieMd5 = localStorage.pma;
-                console.log("it seems like we have a cookie: " + localStorage.pma);
-                serverSend('GetCookie', {"md5":localStorage.cookieMd5}) //send md5, receives id
-                .then(function(response) {
-                    localStorage.userId = response.data;
-                    console.log("user " + localStorage.userId + " retrieved");
-                    localStorage.cookieSet = true;
-                });
-            }
+        var milli = Date.now();
+        var md5_sum = md5(milli.toString());
+        var current = localStorage.pma || 0;
+        if (current == 0) {
+            localStorage.pma = md5_sum;
+            localStorage.cookieMd5 = md5_sum;
         }
+        return serverSend('SetCookie', {milli:milli, md5:md5_sum, current:current}); //gives id
+        //on the .then, set the following:
+        // localStorage.userId
+        // localStorage.cookieSet
     }
-    
 
-
-
-
-
-
-    //this would be the service to call your server, a standard bridge between your model an $http
-
-    // the database (normally on your server)
     var randomsItems = [];
 
     function createRandomItem(id) {

@@ -82,7 +82,7 @@
                 <h3 style="text-align:center">{{q.q_a[q.qNumber].description}}</h2>
                 <!-- selected answer: {{q.q_a[q.qNumber].the_answer}} -->
                 <div class="col-centered" style="left:50%;" ng-repeat="v in q.q_a[q.qNumber].questions">
-                    <label class="btn btn-default col-centered" ng-model="q.q_a[q.qNumber].the_answer" uib-btn-radio="v.short_q_name" ng-click="q.calcRisk()" style="width:500px;">{{v.long_q_name}}
+                    <label class="btn btn-default col-centered" ng-model="q.q_a[q.qNumber].the_answer" uib-btn-radio="v.short_q_name" ng-click="q.clickAnswer()" style="width:500px;">{{v.long_q_name}}
                     </label>
                 </div>
             </div>
