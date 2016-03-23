@@ -19,8 +19,8 @@ angular.module('sbAdminApp')
             }else {
                 localStorage.pma_i18l = JSON.stringify(response.data); //already json encoded
             }
+            maslulim.language = JSON.parse(localStorage.pma_i18l);
         });
-        maslulim.language = JSON.parse(localStorage.pma_i18l);
         maslulim.data_ready = true;
         maslulim.rank = 2.5;
         maslulim.originalRank = 0;
@@ -34,9 +34,22 @@ angular.module('sbAdminApp')
         // localStorage.cookieSet
         // localStorage.userId
         // dataService.cookieInit();
-
+        function originalRankText() {
+            // debugger;
+            for (var i=0; i<Object.keys(maslulim.maslulimData).length; i++) {
+                var key = Object.keys(maslulim.maslulimData)[i];
+                var value = maslulim.maslulimData[key];
+                if (value.client_risk_from <= maslulim.rank && value.client_risk_to >= maslulim.rank) {
+                    maslulim.originalClientriskName = value.client_risk_name;
+                }
+            }
+            
+        }
         //this function is run when user clicks to select a maslul
-        maslulim.updateMaslul = function(riskName, selectedMaslul) {
+        maslulim.updateMaslul = function(maslulArr) {
+            console.log(maslulArr);
+            var riskName = maslulArr.client_risk_name;
+            var selectedMaslul = maslulArr.maslul_number;
             var query = "UPDATE `cookies` SET `selected_maslul` = '" + selectedMaslul + "', `selected_maslul_name`='" + riskName + "' WHERE `CookieID`='" + localStorage.userId + "'";
             console.log("tring to update riskname and selected maslul to " + riskName + " " + selectedMaslul + " query: " + query);
             dataService.serverSend('testingservice',{"query":query});
@@ -44,7 +57,14 @@ angular.module('sbAdminApp')
             maslulim.selectedMaslulName = riskName;
             localStorage.selectedMaslul = selectedMaslul;
             localStorage.selectedMaslulName = riskName;
+            localStorage.selectedMaslulData = JSON.stringify(maslulArr);
 
+        }
+        maslulim.showClientRiskName = function(riskname) {
+            if (maslulim.originalClientriskName === undefined) {
+                maslulim.originalClientriskName = riskname;
+            }
+            return riskname;
         }
         maslulim.reset = function() {
             delete maslulim.updatedRank;
@@ -217,6 +237,9 @@ angular.module('sbAdminApp')
                                     maslul.sum_holding = Math.round(holding_sum*100) + "%";
                                     data_holder.push(maslul);
                                 }
+
+                                //sets the original rank text
+                                originalRankText();
                                 //console.log(response.data);
                                 //console.log(JSON.stringify(data_holder));
                                 maslulim.maslulimData = data_holder;

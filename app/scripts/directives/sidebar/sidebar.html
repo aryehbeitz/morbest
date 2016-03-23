@@ -1,26 +1,29 @@
 <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav in" id="side-menu">
-            <sidebar-search></sidebar-search>
-            <li ui-sref-active="active">
+            <!-- <sidebar-search></sidebar-search> -->
+<!--             <li ui-sref-active="active">
                 <a ui-sref="dashboard.table"><i class="fa fa-table fa-fw"></i> Tables</a>
-            </li>
-            <li ui-sref-active="active">
+            </li> -->
+            <!-- <li ui-sref-active="active">
                 <a ui-sref="dashboard.testing"><i class="fa fa-table fa-fw"></i> Testing</a>
-            </li>            
-            <li ui-sref-active="active">
-                <a ui-sref="dashboard.maslulim"><i class="fa fa-table fa-fw"></i> Maslulim</a>
-            </li>            
+            </li>      -->       
             <li ui-sref-active="active">
                 <a ui-sref="dashboard.questions"><i class="fa fa-table fa-fw"></i> Questions</a>
             </li>
             <li ui-sref-active="active">
-                <a ui-sref="dashboard.blankpage"><i class="fa fa-table fa-fw"></i> Blank Page</a>
+                <a ui-sref="dashboard.maslulim"><i class="fa fa-table fa-fw"></i> Maslulim</a>
             </li>
             <li ui-sref-active="active">
+                <a ui-sref="dashboard.summaryportfolio"><i class="fa fa-table fa-fw"></i> Summary Portfolio</a>
+            </li>                 
+            <!-- <li ui-sref-active="active">
+                <a ui-sref="dashboard.blankpage"><i class="fa fa-table fa-fw"></i> Blank Page</a>
+            </li> -->
+            <!-- <li ui-sref-active="active">
                 <a ui-sref="dashboard.form"><i class="fa fa-edit fa-fw"></i> Forms</a>
-            </li>
-            <li ng-class="{active: collapseVar==1}">{{dropDown}}
+            </li> -->
+           <!--  <li ng-class="{active: collapseVar==1}">{{dropDown}}
                 <a href="" ng-click="check(1)"><i class="fa fa-wrench fa-fw"></i> UI Elements<span
                         class="fa arrow"></span></a>
                 <ul class="nav nav-second-level" uib-collapse="collapseVar!=1">
@@ -43,7 +46,6 @@
                         <a ui-sref="dashboard.grid">Grid</a>
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
             </li>
             <li ng-class="{active:collapseVar==4}">
                 <a href="" ng-click="check(4)"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span
@@ -56,9 +58,7 @@
                         <a ui-sref="login">Login Page</a>
                     </li>
                 </ul>
-                <!-- /.nav-second-level -->
-            </li>
+            </li> -->
         </ul>
     </div>
-    <!-- /.sidebar-collapse -->
 </div>

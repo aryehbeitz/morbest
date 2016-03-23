@@ -34,6 +34,18 @@ angular.module('sbAdminApp')
           else
             $scope.multiCollapseVar = y;
         };
+          
+        if (localStorage.showNavbar === undefined) {
+          localStorage.showNavbar = 1;
+        }
+        if (localStorage.showNavbar == 1) {
+          unhideNavbar();
+        } else {
+          hideNavbar();
+        }
+
+
+
         //$scope.navHideStatus = hideSidebar.navHideStatus;
         //console.log(hideSidebar.navHideStatus);
       }

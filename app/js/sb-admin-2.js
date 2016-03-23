@@ -10,23 +10,50 @@ $(function() {
 // Sets the min-height of #page-wrapper to window size
 
 $(function() {
-    window.showNavbar = true;
-    window.toggleNavbar = function() {
-        // console.log("toggl sidebar");
-
-        if (window.showNavbar) { //showing and want to hide
-            $("#page-wrapper").css({"margin": "0"});
-            $('div.navbar-collapse').addClass('collapse');
-            $('#side-menu').hide();
-        }
-        else if (!window.showNavbar) {
-            $("#page-wrapper").css({"margin": "0 0 0 250px"});
-            $('div.navbar-collapse').removeClass('collapse');
-            $('#side-menu').show();
-        }
-        window.showNavbar = !window.showNavbar;
-        
-    }
+  // // debugger;
+  //   window.hideNavbar = function() {
+  //     setTimeout(function(){
+  //       console.log("trying to hide");
+  //       $("#page-wrapper").css({"margin": "0"});
+  //       $('div.navbar-collapse').addClass('collapse');
+  //       $('#side-menu').hide();
+  //     },1000);
+  //   }
+  //   window.unhideNavbar = function() {
+  //     setTimeout(function(){
+  //       console.log("trying to unhide");
+  //       $("#page-wrapper").css({"margin": "0 0 0 250px"});
+  //       $('div.navbar-collapse').removeClass('collapse');
+  //       $('#side-menu').show();
+  //     },1000);
+  //   }
+  //   window.toggleNavbar = function() {
+  //       if (window.showNavbar) { //showing and want to hide
+  //         window.hideNavbar();
+  //           // $("#page-wrapper").css({"margin": "0"});
+  //           // $('div.navbar-collapse').addClass('collapse');
+  //           // $('#side-menu').hide();
+  //       }
+  //       else if (!window.showNavbar) {
+  //         window.unhideNavbar();
+  //           // $("#page-wrapper").css({"margin": "0 0 0 250px"});
+  //           // $('div.navbar-collapse').removeClass('collapse');
+  //           // $('#side-menu').show();
+  //       }
+  //       window.showNavbar = !window.showNavbar;
+  //       localStorage.showNavbar = window.showNavbar;
+  //   }
+  //   if (localStorage.showNavbar !== undefined) {
+  //     window.showNavbar = localStorage.showNavbar;
+  //   } else {
+  //     window.showNavbar = true;
+  //   }
+  //   console.log("window.showNavbar: "+window.showNavbar);console.log("localStorage.showNavbar: "+localStorage.showNavbar);
+  //   if (window.showNavbar == 'true') {
+  //     window.unhideNavbar();
+  //   } else {
+  //     window.hideNavbar();
+  //   }
 
     $(window).bind("load resize", function() {
         topOffset = 50;
@@ -388,4 +415,24 @@ function utf8_encode(argString) {
   }
 
   return utftext;
+}
+
+function hideNavbar() {
+  $("#page-wrapper").css({"margin": "0"});
+  $('div.navbar-collapse').addClass('collapse');
+  $('#side-menu').hide();
+}
+function unhideNavbar() {
+  $("#page-wrapper").css({"margin": "0 0 0 250px"});
+  $('div.navbar-collapse').removeClass('collapse');
+  $('#side-menu').show();
+}
+function toggleNavbar() {
+    if (localStorage.showNavbar == 1) { //showing and want to hide
+      hideNavbar();
+    }
+    else {
+      unhideNavbar();
+    }
+    localStorage.showNavbar = (localStorage.showNavbar == 0)?1:0;
 }

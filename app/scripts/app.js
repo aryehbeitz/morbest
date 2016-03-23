@@ -44,7 +44,7 @@ angular
       events:true,
     })
 
-    $urlRouterProvider.otherwise('/dashboard/home');
+    $urlRouterProvider.otherwise('/dashboard/questions');
 
     $stateProvider
       .state('dashboard', {
@@ -308,6 +308,23 @@ angular
                   $ocLazyLoad.load({
                       name:'sbAdminApp',
                       files:['scripts/controllers/QuestionsController.js']
+                  })
+                }
+              }
+          }).state('dashboard.summaryportfolio',{
+              templateUrl:'views/summaryportfolio_template.html',
+              url:'/summaryportfolio',
+              resolve: {
+                loadMyFile:function($ocLazyLoad) {
+                  return $ocLazyLoad.load({
+                    name:'SummaryPortfolioCtrl',
+                    files:[
+                      // 'css/bootstrap3.min.css'
+                    ]
+                  }),
+                  $ocLazyLoad.load({
+                      name:'sbAdminApp',
+                      files:['scripts/controllers/SummaryPortfolioCtrlController.js']
                   })
                 }
               }
