@@ -8,6 +8,7 @@ angular.module('sbAdminApp')
     sp.selectedMaslulName = localStorage.selectedMaslulName;
     sp.maslulArr = JSON.parse(localStorage.selectedMaslulData);
     sp.rank = parseFloat(localStorage.updatedRank);
+
     dataService.languageStrings("English").then(function(response){
         var fault = parseInt(response.data);
         if (fault == 0) {
@@ -20,6 +21,51 @@ angular.module('sbAdminApp')
         sp.longDescriptionVariable = sp.language["Maslul_" + ((sp.maslulArr.maslul_number > 9)?sp.maslulArr.maslul_number:'0'+sp.maslulArr.maslul_number)+ "_Long_Description"];
         prepareCharts();
     });
+
+    //now for the signup stuff
+    sp.formValiate = function() {
+        //this function is called once at the beginning and after each input change
+        // console.log("validating");
+        sp.firstNameError ="";
+        sp.lastNameError = "";
+        sp.emailAddressError = "";
+        sp.passwordError = "";
+        if (!sp.firstName || sp.firstName.length < 4) {
+            sp.firstNameError = "Please specify a first name";
+            return true;
+        }
+        if (!sp.lastName || sp.lastName.length < 4) {
+            sp.lastNameError = "Please specify a last name";
+            return true;
+        }
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(sp.emailAddress)) {
+            sp.emailAddressError = "Please specify a valid email address";
+            return true;
+        }
+        if (!sp.password || sp.password.length < 8) {
+            sp.passwordError = "Please specify a password of at least 8 characters";
+            return true;
+        }
+        return false;
+    }
+    sp.processSignup = function() {
+        //grab cookie data, grab selected maslul data, grap input details and create an entry on the database
+        dataService.serverSend("registration", 
+        {
+            userid:localStorage.userId, 
+            rank:localStorage.updatedRank, 
+            selectedMaslul:localStorage.selectedMaslulName, 
+            selectedMaslulNumber:localStorage.selectedMaslul, 
+            md5:localStorage.pma,
+            firstname:sp.firstName,
+            lastname:sp.lastName,
+            email:sp.emailAddress,
+            password:sp.password
+        }).then(function(response){
+            console.log(response.data);
+        })
+    }
     //now prepare the chart
     function prepareCharts() {
         sp.chart = {
@@ -180,7 +226,7 @@ angular.module('sbAdminApp')
                          distance: -30,
                          color: 'black',
                         enabled: true,
-                        format: '{point.percentage:.1f} %',
+                        format: '{point.percentage:.0f}%',
                         style: {
                             color:  'black',//(Highcharts.theme && Highcharts.theme.contrastTextColor) ||
                             textShadow: false 
@@ -242,8 +288,8 @@ angular.module('sbAdminApp')
         }
         min = min - 5;
         max = max + 5;
-        console.log(min)
-        console.log(max)
+        // console.log(min)
+        // console.log(max)
         $('#barchart').highcharts({
                 chart: {
                     type: 'column'

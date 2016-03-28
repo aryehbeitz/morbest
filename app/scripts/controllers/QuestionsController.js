@@ -55,7 +55,7 @@ angular.module('sbAdminApp')
                 if (q.q_a[q.qNumber].the_answer[i].is_marked == true) {
                     onemarked = true;
                 }
-                console.log(q.q_a[q.qNumber].the_answer[i])
+                // console.log(q.q_a[q.qNumber].the_answer[i])
             }
             if (onemarked == false) {
                 q.answeredQuestions[q.qNumber] = undefined;
@@ -214,8 +214,8 @@ angular.module('sbAdminApp')
                                     if (userData[i].QuestionId == 2) {
                                         //age question
                                         //load date for second question
-                                        console.log("date answer");
-                                        console.log(userData[i].shortAnswer);
+                                        // console.log("date answer");
+                                        // console.log(userData[i].shortAnswer);
                                         var user_dob = JSON.parse(userData[i].shortAnswer); //load date
                                         //loads DOB
                                         if (Object.keys(user_dob).length) {
@@ -228,8 +228,8 @@ angular.module('sbAdminApp')
                                     }
                                     // console.log("loading question " + i + " which is id " + userData[i].QuestionId + " and the saved answer is " + userData[i].shortAnswer);
                                     q.q_a[j].the_answer = userData[i].shortAnswer;
-                                    console.log(j);
-                                    console.log(q.q_a[j].the_answer.length)
+                                    // console.log(j);
+                                    // console.log(q.q_a[j].the_answer.length)
                                     if (q.q_a[j].the_answer.length) {
                                         q.answeredQuestions[j] = 1;
                                     }
@@ -243,7 +243,7 @@ angular.module('sbAdminApp')
     }
     //button to move to next question
     function Next(){
-        console.log(typeof q.answeredQuestions[q.qNumber]);
+        // console.log(typeof q.answeredQuestions[q.qNumber]);
         if (q.qNumber<q.NumQuestions-1) {
             if (typeof q.answeredQuestions[q.qNumber] !== 'undefined') {
                 q.qNumber++;
@@ -300,19 +300,19 @@ angular.module('sbAdminApp')
 
                     var answeredQuestions = 0;
                     for (var i=0; i<q.NumQuestions; i++) {
-                        console.log("type at " + i + " is " + typeof q.answeredQuestions[i]);
+                        // console.log("type at " + i + " is " + typeof q.answeredQuestions[i]);
                         if (typeof q.answeredQuestions[i] !== 'undefined') {
                             answeredQuestions++;
                         }
                     }
-                    console.log("question number:" + q.qNumber);
-                    console.log("total questions: " + q.NumQuestions);
-                    console.log("total questions answered: " + answeredQuestions);
+                    // console.log("question number:" + q.qNumber);
+                    // console.log("total questions: " + q.NumQuestions);
+                    // console.log("total questions answered: " + answeredQuestions);
                     if (answeredQuestions == q.NumQuestions && q.qNumber == (q.NumQuestions-1))//last
                     {
                         $state.go('dashboard.maslulim',{},{ reload: true });
                     }
-                    console.log(response.data);
+                    // console.log(response.data);
                 });
             }
         }

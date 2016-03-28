@@ -8,8 +8,40 @@
 .pie-legend {
     list-style: none;    
 }*/
+.bigButton {
+    font-weight: bold;
+    font-size: 1.2em;
+
+}
+.center-div
+{
+  position: absolute;
+  margin: auto;
+  padding-top: 100px;
+  top: 570px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 400px;
+  height: 550px;
+  background-color: orange;
+  border-radius: 20px;
+}
+.textTitle {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.errorText {
+    font-size: 0.8em;
+    min-height:100px;
+    color: red;
+    /*text-align: left;*/
+    /*height:50px;*/
+    /*clear:both;*/
+}
 </style>
 <div ng-controller="SummaryPortfolioCtrl as sp">
+    <!-- this is the part with the graphs before the registration -->
     <div ng-show="sp.showRegister == false" class="col-md-12">
         <div class="pull-left" style="height:300px;top:36px;width:260px;position: relative">
             <p style="font-size: 2.4em;text-align: center;">{{sp.rank.toFixed(2)}}</p>
@@ -37,17 +69,42 @@
             <button ng-click="sp.showRegister = !sp.showRegister" class="btn btn-default" style="font-size: 2.0em;text-align: center;position: relative;top:120px;">Register</button>
         </div>
     </div>
+
+    <!-- this is the register dialog -->
     <div ng-show="sp.showRegister == true" class="col-md-12">
-        <!-- register dialog -->
-        <div class="col-centered" style="left:25%; top:50%; width:700px;height:600px; background-color: grey">
-            First Name<input type="text"><br>
-            Last Name<input type="text"><br>
-            Your Emails Address<input type="text"> (is your username)<br>
-            Password<input type="password"> (minimum 8 characters)<br>
-            <button>continue</button>
+        <div class="center-div">
+            <div class="col-centered" style="width: 300px; left: 13%; position: relative;">
+                <div class="form-group">
+                  <label for="firstname" class="col-md-12 control-label">First Name:</label>
+                  <input type="text" class="form-control" id="firstname" ng-model="sp.firstName">
+                  <p class="help-block"><span class="errorText">{{sp.firstNameError}}</span></p>
+                  
+                </div>
+                <div class="form-group">
+                  <label for="lastName" class="col-md-12 control-label">Last Name</label>
+                  <input type="text" class="form-control" id="lastName" ng-model="sp.lastName">
+                  <p class="help-block"><span class="errorText">{{sp.lastNameError}}</span></p>
+                  
+                </div>
+                <div class="form-group">
+                  <label for="emailAdddress" class="col-md-12 control-label">Your Email Address:</label>
+                  <input type="text" class="form-control" id="emailAdddress" ng-model="sp.emailAddress">
+                  <p class="help-block"><span class="errorText">{{sp.emailAddressError}}</span></p>
+                </div>
+                <div class="form-group">
+                  <label for="password" class="col-md-12 control-label">Password:</label>
+                  <input type="text" class="form-control" id="password" ng-model="sp.password">
+                  <p class="help-block"><span class="errorText">{{sp.passwordError}}</span></p>
+                </div>
+                <div class="form-group col-md-12"></div>
+                <div class="form-group col-md-6 pull-right">
+                    <button ng-disabled="sp.formValiate()" ng-click="sp.processSignup()" class="form-control btn btn-default"><span class="bigButton">Continue</span></button>
+                </div>
+            </div>
         </div>
     </div>
-    <div ng-if=0 class="col-lg-12" style="width:100%">
+<!--     <div class="col-lg-12" style="width:100%">
+        <pre>{{localStorage | json}}</pre>
         <pre>{{sp.maslulArr | json}}</pre>
-    </div>
+    </div> -->
 </div>
